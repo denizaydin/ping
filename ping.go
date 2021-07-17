@@ -87,14 +87,14 @@ var (
 // New returns a new Pinger struct pointer.
 func New(addr string) *Pinger {
 	r := rand.New(rand.NewSource(getSeed()))
+	interval := int32(1000)
 	return &Pinger{
-		Count:      -1,
-		Interval:   time.Second,
-		RecordRtts: true,
-		Size:       timeSliceLength + trackerLength,
-		Timeout:    time.Duration(math.MaxInt64),
-		Tracker:    r.Uint64(),
-
+		Count:             -1,
+		Interval:          &interval,
+		RecordRtts:        true,
+		Size:              timeSliceLength + trackerLength,
+		Timeout:           time.Duration(math.MaxInt64),
+		Tracker:           r.Uint64(),
 		addr:              addr,
 		done:              make(chan interface{}),
 		id:                r.Intn(math.MaxUint16),
@@ -116,7 +116,7 @@ func NewPinger(addr string) (*Pinger, error) {
 // Pinger represents a packet sender/receiver.
 type Pinger struct {
 	// Interval is the wait time between each packet send. Default is 1s.
-	Interval time.Duration
+	Interval *int32
 
 	// Timeout specifies a timeout before ping exits, regardless of how many
 	// packets have been received.
@@ -434,7 +434,9 @@ func (p *Pinger) runLoop(
 	}
 
 	timeout := time.NewTicker(p.Timeout)
-	interval := time.NewTicker(p.Interval)
+	interval := time.NewTicker(time.Duration(*p.Interval) * time.Millisecond)
+	fmt.Printf("%d interval\n", *p.Interval)
+
 	defer func() {
 		p.Stop()
 		interval.Stop()
@@ -461,7 +463,12 @@ func (p *Pinger) runLoop(
 			}
 
 		case <-interval.C:
+
+			fmt.Printf("%s %d interval\n", time.Now().Format("2006-01-02 15:04:05.000000"), *p.Interval)
+
+			interval = time.NewTicker(time.Duration(*p.Interval) * time.Millisecond)
 			if p.Count > 0 && p.PacketsSent >= p.Count {
+				fmt.Printf("%d interval stopping\n", *p.Interval)
 				interval.Stop()
 				continue
 			}
