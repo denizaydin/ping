@@ -435,8 +435,6 @@ func (p *Pinger) runLoop(
 
 	timeout := time.NewTicker(p.Timeout)
 	interval := time.NewTicker(time.Duration(*p.Interval) * time.Millisecond)
-	fmt.Printf("%d interval\n", *p.Interval)
-
 	defer func() {
 		p.Stop()
 		interval.Stop()
@@ -463,12 +461,8 @@ func (p *Pinger) runLoop(
 			}
 
 		case <-interval.C:
-
-			fmt.Printf("%s %d interval\n", time.Now().Format("2006-01-02 15:04:05.000000"), *p.Interval)
-
 			interval = time.NewTicker(time.Duration(*p.Interval) * time.Millisecond)
 			if p.Count > 0 && p.PacketsSent >= p.Count {
-				fmt.Printf("%d interval stopping\n", *p.Interval)
 				interval.Stop()
 				continue
 			}
