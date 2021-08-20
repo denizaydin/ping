@@ -70,7 +70,8 @@ func main() {
 	pinger.OnRecv = func(pkt *ping.Packet) {
 		fmt.Printf("%d bytes from %s: icmp_seq=%d time=%v ttl=%v\n",
 			pkt.Nbytes, pkt.IPAddr, pkt.Seq, pkt.Rtt, pkt.Ttl)
-		*pinger.Interval = *pinger.Interval * 2
+		// for testing pinger increasing doubling interval for each time
+		//*pinger.Interval = *pinger.Interval * 2
 	}
 	pinger.OnDuplicateRecv = func(pkt *ping.Packet) {
 		fmt.Printf("%d bytes from %s: icmp_seq=%d time=%v ttl=%v (DUP!)\n",
