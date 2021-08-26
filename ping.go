@@ -451,7 +451,7 @@ func (p *Pinger) runLoop(
 			return nil
 
 		case <-timeout.C:
-			logger.Errof("removing timeout action")
+			logger.Warnf("removing timeout action")
 			//return nil
 		case r := <-recvCh:
 			err := p.processPacket(r)
