@@ -433,7 +433,7 @@ func (p *Pinger) runLoop(
 		logger = NoopLogger{}
 	}
 
-	timeout := time.NewTicker(p.Timeout)
+	//timeout := time.NewTicker(p.Timeout)
 	interval := time.NewTicker(time.Duration(*p.Interval) * time.Millisecond)
 	defer func() {
 		p.Stop()
@@ -450,9 +450,9 @@ func (p *Pinger) runLoop(
 		case <-p.done:
 			return nil
 
-		case <-timeout.C:
+			/* 		case <-timeout.C:
 			logger.Warnf("removing timeout action")
-			//return nil
+			//return nil */
 		case r := <-recvCh:
 			err := p.processPacket(r)
 			if err != nil {
