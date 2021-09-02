@@ -438,7 +438,7 @@ func (p *Pinger) runLoop(
 	defer func() {
 		p.Stop()
 		interval.Stop()
-		timeout.Stop()
+		//timeout.Stop()
 	}()
 
 	if err := p.sendICMP(conn); err != nil {
